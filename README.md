@@ -12,3 +12,34 @@ public static void mainp
 
 Kafka采用zookeeper作为管理，记录了producer到broker的信息，以及consumer与broker中partition的对应关系。因此，生产者可以直接把数据传递给broker，broker通过zookeeper进行leader-->followers的选举管理；消费者通过zookeeper保存读取的位置offset以及读取的topic的partition分区信息。
 
+
+1.发起请求的常用工具是 HttpClient 
+- HttpClient 是早期 Apache 开源的 Http 客户端
+- HttpClient 是一个 Java 客户端库
+- HttpClient 调用方式比较繁琐, 性能也相对较差, 且在多线程下有安全问题
+可以用OkHttp来替换:
+用法:
+object OkHttpTest {
+  def main(args: Array[String]): Unit = {
+    val url = "https://restapi.amap.com/v3/geocode/regeo?" +
+      "location=116.310003,39.991957" +
+      "&key=ef752cf28705a5f3f1e95f4b1158a7a1"
+    //1.client
+    val client = new OkHttpClient()
+	
+    //2.get
+    val request: Request = new Request.Builder()
+      .url(url)
+      .get()
+      .build()
+	  
+    //3.excute
+    val response: Response = client.newCall(request).execute()
+
+    //print response
+    if (response.isSuccessful) {
+      println(response.body().string())
+    }
+
+  }
+}
